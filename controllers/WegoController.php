@@ -188,7 +188,7 @@ class WegoController extends \yii\web\Controller
 
     public function actionTitle($shop_id)
     {
-        $command = Yii::$app->db->createCommand("SELECT * FROM `wego_goods_list` WHERE `shop_id` = '{$shop_id}'");
+        $command = Yii::$app->db->createCommand("SELECT * FROM `wego_goods_list` WHERE `shop_id` = '{$shop_id}' AND `title_en`='' AND `is_translated`=0");
         $goods = $command->queryAll();
 
         Yii::$app->brand->setBrands();
@@ -491,7 +491,7 @@ class WegoController extends \yii\web\Controller
     }
 
 
-    public function actionEasytemplate($shop_id, $is_translated = '', $start = '', $end = '')
+    public function actionEasytemplate($shop_id, $is_translated = '', $start = '', $end = '',$category='women_apparel_category')
     {
 
         $sql = 'SELECT * FROM `wego_goods_list` 
@@ -522,6 +522,7 @@ class WegoController extends \yii\web\Controller
 
         $command = Yii::$app->db->createCommand($sql);
         $goods = $command->queryAll();
+
 
 
         if ($goods) {
@@ -561,7 +562,7 @@ class WegoController extends \yii\web\Controller
 
                 $sheet->setCellValue('A' . $c, $good['title']);
                 $sheet->setCellValue('B' . $c, $good['title_en']);
-                $sheet->setCellValue('C' . $c, @Yii::$app->shopee->women_apparel_category[$good['cate']]['th']);
+                $sheet->setCellValue('C' . $c, @Yii::$app->shopee->$category[$good['cate']]['th']);
 
                 foreach ($imgs as $i => $img) {
 
@@ -651,8 +652,11 @@ class WegoController extends \yii\web\Controller
         foreach ($rows as $row){
 
             $title_en = trim($row[0]);
-            $category = trim($row[1]);
+            $cate = trim($row[1]);
             $sku = explode("/",trim($row[2]))[1];
+            if(isset($row[3])){
+                $price = trim($row[3]);
+            }
 
 //            echo $title_en;
 //            echo "\n";
@@ -663,9 +667,13 @@ class WegoController extends \yii\web\Controller
 
             if($title_en){
 
+                $sex = Yii::$app->brand->parseSex($title_en);
+
+                $formats = json_encode(Yii::$app->brand->clothesSize($title_en,$sex));
+
 //                echo $category;
 //                echo "\n";
-                $category_id = Yii::$app->redis->get('category:'.$category.'');
+                $category_id = Yii::$app->redis->get('category:'.$cate.'');
 
 //                echo $category_id;
 //                echo "\n";
@@ -684,10 +692,15 @@ class WegoController extends \yii\web\Controller
 
                 $goodM->title_en = trim($title_en);
                 $goodM->category_id =  $category_id;
+                $goodM->formats = $formats;
+
+                if(isset($price)){
+                    $goodM->price = $price;
+                }
+
                 $goodM->is_translated = 2;
+
                 $goodM->update();
-
-
 
                 $models[] = ArrayHelper::toArray($goodM);
 
@@ -699,6 +712,9 @@ class WegoController extends \yii\web\Controller
             }
 
         }
+
+        print_r($models);
+        //exit;
 
         $splits = Yii::$app->utils->split($models, 500);
 
@@ -712,6 +728,7 @@ class WegoController extends \yii\web\Controller
             }
 
         }
+
 
 
 
