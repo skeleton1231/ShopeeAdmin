@@ -265,8 +265,8 @@ All products will be shipped from oversea, so please kindly understand the shipp
 //                $category = json_decode(Yii::$app->redis->get('category:' . @$this->$category_arr[$good['cate']]['th'] . ''), true)[$site];
 //            }
 
-            $category = json_decode(Yii::$app->redis->get('category:' . @$this->$category_arr[$good['cate']]['th'] . ''), true)[$site];
-
+           // $category = json_decode(Yii::$app->redis->get('category:' . @$this->$category_arr[$good['cate']]['th'] . ''), true)[$site];
+            $category = json_decode($good['category_id'],true)[$site];
 
             // if($category){
 
