@@ -123,11 +123,15 @@ Class WegoComponent extends Component
                         $data['price'] = @$item['price'] ? $item['price'] : 0;
 
                         $formats = [];
+						
+						if(@$item['formats']){
+							
+							 foreach ($item['formats'] as $ft) {
 
-                        foreach ($item['formats'] as $ft) {
-
-                            $formats[] = $ft['formatName'];
-                        }
+								$formats[] = $ft['formatName'];
+							}
+						}
+						
 
                         $data['formats'] = json_encode($formats);
 

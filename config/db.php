@@ -2,9 +2,9 @@
 
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=mysql;dbname=shopee',
+    'dsn' => 'mysql:host=127.0.0.1;dbname=shopee',
     'username' => 'root',
-    'password' => 'root',
+    'password' => 'jstech2019',
     'charset' => 'utf8',
 
     // Schema cache options (for production environment)

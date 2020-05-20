@@ -97,7 +97,7 @@ class WegoController extends \yii\web\Controller
 
         $command = Yii::$app->db->createCommand("SELECT * FROM `wego_goods_list` WHERE `shop_id` = '{$shop_id}' AND `is_translated`=0 AND `price`!=0");
         $goods = $command->queryAll();
-
+		
         $items = [];
 
         foreach ($goods as $good) {
@@ -491,7 +491,7 @@ class WegoController extends \yii\web\Controller
     }
 
 
-    public function actionEasytemplate($shop_id, $is_translated = '', $start = '', $end = '')
+    public function actionEasytemplate($shop_id, $is_translated = '', $start = '', $end = '',$category='women_apparel_category')
     {
 
         $sql = 'SELECT * FROM `wego_goods_list` 
@@ -561,7 +561,7 @@ class WegoController extends \yii\web\Controller
 
                 $sheet->setCellValue('A' . $c, $good['title']);
                 $sheet->setCellValue('B' . $c, $good['title_en']);
-                $sheet->setCellValue('C' . $c, @Yii::$app->shopee->women_apparel_category[$good['cate']]['th']);
+                $sheet->setCellValue('C' . $c, @Yii::$app->shopee->$category[$good['cate']]['th']);
 
                 foreach ($imgs as $i => $img) {
 
@@ -648,12 +648,13 @@ class WegoController extends \yii\web\Controller
 
         $models = [];
 
+
         foreach ($rows as $row){
 
             $title_en = trim($row[0]);
             $category = trim($row[1]);
             $sku = explode("/",trim($row[2]))[1];
-
+			
 //            echo $title_en;
 //            echo "\n";
 //            echo $category;
