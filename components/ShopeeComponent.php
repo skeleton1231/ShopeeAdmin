@@ -31,7 +31,7 @@ class ShopeeComponent extends Component
     public $is_massship = false;
 
     public $sites = [
-        'my', 'ph', 'sg', 'th', 'vn','id'
+        'my', 'ph', 'sg', 'th', 'vn', 'id'
     ];
 
 
@@ -231,7 +231,7 @@ All products will be shipped from oversea, so please kindly understand the shipp
 
         $column = json_decode(Yii::$app->redis->get('ps_column_index'), true);
 
-        $dir = Yii::$app->basePath . '/data/xlsx/' . $name . '/'.Date('Y-m-d H').'/' . $site . '/';
+        $dir = Yii::$app->basePath . '/data/xlsx/' . $name . '/' . Date('Y-m-d H') . '/' . $site . '/';
 
         if (!file_exists($dir)) {
             mkdir($dir, 0777, true);
@@ -253,88 +253,90 @@ All products will be shipped from oversea, so please kindly understand the shipp
 
         $profit = $this->profit[$site];
 
+
         foreach ($goods as $k => $good) {
 
-            if($good['is_translated']==2){
+//            if ($good['is_translated'] == 2) {
+//
+//                $category = json_decode($good['category_id'], true)[$site];
+//
+//            } else {
+//
+//                $category = json_decode(Yii::$app->redis->get('category:' . @$this->$category_arr[$good['cate']]['th'] . ''), true)[$site];
+//            }
 
-                $category = json_decode($good['category_id'],true)[$site];
+           // $category = json_decode(Yii::$app->redis->get('category:' . @$this->$category_arr[$good['cate']]['th'] . ''), true)[$site];
+            $category = json_decode($good['category_id'],true)[$site];
+
+            // if($category){
+
+            $price = $good['price'] * $profit;
+
+            $c = $k + 2;
+
+            if ($site == 'vn' && $price > $this->vn_max_price) {
+
+                continue;
+
+            } elseif ($site != 'vn') {
+
+                $price = round(($price) / $this->discount);
 
             }
-            else{
-
-                $category = json_decode(Yii::$app->redis->get('category:'.@$this->$category_arr[$good['cate']]['th'].''),true)[$site];
-            }
-
-            if($category){
 
 
-                $price = $good['price'] * $profit;
-
-                $c = $k + 2;
-
-                if ($site == 'vn' && $price > $this->vn_max_price) {
-
-                    continue;
-
-                }
-                elseif($site != 'vn'){
-
-                    $price = round(($price) / $this->discount);
-
-                }
+            $sheet->setCellValue('A' . $c, $category);
+            $sheet->setCellValue('B' . $c, $good['title_en']);
+            $sheet->setCellValue('C' . $c, $this->desc);
+            $sheet->setCellValue('D' . $c, $price);
+            $sheet->setCellValue('E' . $c, 10);
+            $sheet->setCellValue('F' . $c, $site == 'vn' ? 1 : 0.01);
+            $sheet->setCellValue('G' . $c, 2);
+            $sheet->setCellValue('H' . $c, $good['shop_id'] . '/' . $good['goods_id']);
 
 
-                $sheet->setCellValue('A' . $c, $category);
-                $sheet->setCellValue('B' . $c, $good['title_en']);
-                $sheet->setCellValue('C' . $c, $this->desc);
-                $sheet->setCellValue('D' . $c, $price);
-                $sheet->setCellValue('E' . $c, 10);
-                $sheet->setCellValue('F' . $c, $site == 'vn' ? 1: 0.01);
-                $sheet->setCellValue('G' . $c, 2);
-                $sheet->setCellValue('H' . $c, $good['shop_id'] . '/' . $good['goods_id']);
+            $formats = json_decode($good['formats'], true);
 
+            $count = count($formats);
 
-                $formats = json_decode($good['formats'], true);
+            if ($count > 0) {
 
-                $count = count($formats);
+                for ($i = 1; $i <= $count; $i++) {
 
-                if ($count > 0) {
+                    if ($i <= 20) {
 
-                    for ($i = 1; $i <= $count; $i++) {
+                        $var_sku_index = array_search('ps_variation ' . $i . ' ps_variation_sku', $column) . $c;
+                        $var_name_index = array_search('ps_variation ' . $i . ' ps_variation_name', $column) . $c;
+                        $var_price_index = array_search('ps_variation ' . $i . ' ps_variation_price', $column) . $c;
+                        $var_stock_index = array_search('ps_variation ' . $i . ' ps_variation_stock', $column) . $c;
 
-                        if ($i <= 20) {
-
-                            $var_sku_index = array_search('ps_variation ' . $i . ' ps_variation_sku', $column) . $c;
-                            $var_name_index = array_search('ps_variation ' . $i . ' ps_variation_name', $column) . $c;
-                            $var_price_index = array_search('ps_variation ' . $i . ' ps_variation_price', $column) . $c;
-                            $var_stock_index = array_search('ps_variation ' . $i . ' ps_variation_stock', $column) . $c;
-
-                            $sheet->setCellValue($var_sku_index, '');
-                            $sheet->setCellValue($var_name_index, $formats[$i - 1]);
-                            $sheet->setCellValue($var_price_index, '=D' . $c . '');
-                            $sheet->setCellValue($var_stock_index, 10);
-
-                        }
+                        $sheet->setCellValue($var_sku_index, '');
+                        $sheet->setCellValue($var_name_index, $formats[$i - 1]);
+                        $sheet->setCellValue($var_price_index, '=D' . $c . '');
+                        $sheet->setCellValue($var_stock_index, 10);
 
                     }
+
                 }
-
-                $imgs = json_decode($good['imgsSrc'], true);
-
-                $imgs_cnt = count($imgs);
-
-                for ($j = 1; $j <= $imgs_cnt; $j++) {
-                    $img_index = array_search('ps_img_' . $j . '', $column);
-                    $sheet->setCellValue($img_index . $c, $imgs[$j - 1]);
-                }
-
             }
+
+            $imgs = json_decode($good['imgsSrc'], true);
+
+            $imgs_cnt = count($imgs);
+
+            for ($j = 1; $j <= $imgs_cnt; $j++) {
+                $img_index = array_search('ps_img_' . $j . '', $column);
+                $sheet->setCellValue($img_index . $c, $imgs[$j - 1]);
+            }
+
+            // }
 
         }
 
         $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
 
         @$writer->save($filename);
+
 
     }
 

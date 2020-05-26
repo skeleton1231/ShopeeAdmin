@@ -11,7 +11,7 @@ use yii\base\Component;
 Class WegoComponent extends Component
 {
 
-    public $COOKIE = 'UM_distinctid=16df21093b5a29-04565c26a7b2ff-38677b00-13c680-16df21093b6968; token=NjhDMjk5NkQyMUIxRjc0QUE3Qzc5MEVFMzY3REE1OUJCM0I1REFGNDBDMTZFMDJERjgyQUVERERFMDhCNTgyMEI0RUU4NkU0QkUwNUQ4QzUxMUVCNTk3MEY3NTEwRTMx; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%22A201902240951350590013479%22%2C%22first_id%22%3A%2217062a1b26f66b-0b1d7bc07611be-39647b0e-1296000-17062a1b27081e%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22%24device_id%22%3A%2217062a1b26f66b-0b1d7bc07611be-39647b0e-1296000-17062a1b27081e%22%7D; CNZZDATA1275056938=553710192-1571721903-%7C1583775503; JSESSIONID=619C841FF5B41052FA9A2F17BAD4C289';
+    public $COOKIE = 'UM_distinctid=1724e9c4f872b-0822b04d5273fe-d373666-144000-1724e9c4f8831; CNZZDATA1275056938=803481028-1590455464-%7C1590455464; sajssdk_2015_cross_new_user=1; token=NjhDMjk5NkQyMUIxRjc0QUE3Qzc5MEVFMzY3REE1OUJCM0I1REFGNDBDMTZFMDJERjgyQUVERERFMDhCNTgyMEI0RUU4NkU0QkUwNUQ4QzUxMUVCNTk3MEY3NTEwRTMx; client_type=net; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%22A201902240951350590013479%22%2C%22first_id%22%3A%221724e9c4f9b3c-0da1848b63fb94-d373666-1327104-1724e9c4f9c33%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22%24device_id%22%3A%221724e9c4f9b3c-0da1848b63fb94-d373666-1327104-1724e9c4f9c33%22%7D; producte_run_to_dev_tomcat=; JSESSIONID=65CAF5A1C5C88925336EF309F81A3CB1';
     public $shopId;
     public $goodsId;
     public $search_value;
@@ -89,6 +89,8 @@ Class WegoComponent extends Component
         if ($this->time_stamp) {
             $arr['time_stamp'] = $this->time_stamp;
         }
+		
+		print_r($arr);exit;
 
         $response = $this->execHttp($arr);
 

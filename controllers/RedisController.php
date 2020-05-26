@@ -25,11 +25,6 @@ class RedisController extends \yii\web\Controller
 
     }
 
-    public function actionDelcategory(){
-
-
-    }
-
 
     public function actionCategory(){
 
@@ -56,6 +51,7 @@ class RedisController extends \yii\web\Controller
 
         $columns = $rows[0];
 
+
         for($i =1;$i<$count;$i++){
             $row = $rows[$i];
             $value = [];
@@ -63,11 +59,11 @@ class RedisController extends \yii\web\Controller
                 Yii::$app->redis->del('category:'.$r.'');
                 $value[strtolower($columns[$k])] = $r;
             }
+
             Yii::$app->redis->set('category:'.$value['th'].'',json_encode($value));
 
             echo Yii::$app->redis->get('category:'.$value['th'].'');
             echo "\n";
-
         }
 
     }

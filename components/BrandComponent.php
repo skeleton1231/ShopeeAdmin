@@ -904,12 +904,10 @@ Class BrandComponent extends Component
         $formats = [];
         $title = strtoupper($title);
 
-
-
         $size_arr_num = [];
         foreach ($this->en_num_size as $k =>$size_v){
 
-            if(strpos($title,$size_v) !== false){
+            if(strpos($title,$size_v.'-') !== false || strpos($title,'-'.$size_v) !== false){
 
                 $size_arr_num[] = $size_v;
             }
@@ -919,22 +917,14 @@ Class BrandComponent extends Component
         $size_arr_en = [];
         foreach ($this->en_size as $k =>$size_v){
 
-            if(strpos($title,$size_v) !== false){
+            if(strpos($title,$size_v.'-') !== false || strpos($title,'-'.$size_v) !== false){
 
                 $size_arr_en[] = $size_v;
             }
-
         }
-
-//        print_r($size_arr_num);
-//
-//        print_r($size_arr_en);
-//        exit;
 
         $sen_num = count($size_arr_en);
         $snum_num = count($size_arr_num);
-
-
 
         if($sen_num >1 || $snum_num >1){
 
@@ -959,6 +949,24 @@ Class BrandComponent extends Component
                 $formats[] = $stack[$i];
             }
         }
+        elseif (preg_match('/\d{2}-\d{2}/', $title, $sizeArr)) {
+
+
+            $size = $sizeArr[0];
+
+            $size_arr = explode('-', $size);
+            $start = (int)$size_arr[0];
+            $end = (int)$size_arr[1];
+
+            $formats = [];
+
+            for ($i = $start; $i <= $end; $i++) {
+
+                if ($i < 46) {
+                    $formats[] = $i;
+                }
+            }
+        }
         else{
 
             $formats= $sex == "Women's" ? ['S','M','L'] :['M','L','XL','2XL','3XL'];
@@ -967,6 +975,8 @@ Class BrandComponent extends Component
 
         $this->size = $size;
         $this->formats = $formats;
+
+        return $formats;
 
     }
 
