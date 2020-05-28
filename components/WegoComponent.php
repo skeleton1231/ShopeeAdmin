@@ -90,7 +90,6 @@ Class WegoComponent extends Component
             $arr['time_stamp'] = $this->time_stamp;
         }
 		
-		print_r($arr);exit;
 
         $response = $this->execHttp($arr);
 

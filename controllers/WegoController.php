@@ -517,9 +517,11 @@ class WegoController extends \yii\web\Controller
 
         }
 
-        $orderby = ' ORDER BY `cate`';
+        $orderby = ' ORDER BY `time_stamp` DESC';
 
         $sql .= $orderby;
+		
+		//echo $sql;exit;
 
         $command = Yii::$app->db->createCommand($sql);
         $goods = $command->queryAll();
