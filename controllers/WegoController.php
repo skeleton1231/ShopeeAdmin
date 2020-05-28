@@ -671,7 +671,7 @@ class WegoController extends \yii\web\Controller
 
                 if(strpos($title_en,$sku_brr) === false){
 
-                    $title_en .= $sku_brr;
+                    $title_en .= " " . $sku_brr;
                 }
 
                 $sex = Yii::$app->brand->parseSex($title_en);
