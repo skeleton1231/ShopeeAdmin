@@ -124,6 +124,7 @@ Class WegoComponent extends Component
 
                         $formats = [];
 
+
                         foreach ($item['formats'] as $ft) {
 
                             $formats[] = $ft['formatName'];

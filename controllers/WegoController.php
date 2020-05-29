@@ -92,7 +92,7 @@ class WegoController extends \yii\web\Controller
 
     }
 
-    public function actionShoes($shop_id)
+    public function actionShoes($shop_id,$start='',$end='')
     {
 
         $command = Yii::$app->db->createCommand("SELECT * FROM `wego_goods_list` WHERE `shop_id` = '{$shop_id}' AND `is_translated`=0 AND `price`!=0");
@@ -569,45 +569,7 @@ class WegoController extends \yii\web\Controller
                     $pos = $imgs_col[$i] . $c;
 
                     $sheet->setCellValue($pos, $img);
-//                    if(in_array($i,[0,1,($imgs_cn-1)])){
-//
-//                        $pos =  $imgs_col[$i] . $c;
-//
-//                        $img_name = "{$good['goods_id']}-{$i}.jpeg";
-//                        $img_dir = \Yii::$app->basePath . "/web/images/{$good['shop_id']}/";
-//
-//                        if (!file_exists($img_dir)) {
-//                            mkdir($img_dir, 0777, true);
-//                        }
-//                        $img_path = $img_dir . $img_name;
-//
-//                        if (!file_exists($img_path)) {
-//                            $stream = @file_get_contents($img);
-//                            if($stream){
-//                                file_put_contents($img_path, $stream);
-//
-//                            }
-//                        }
-//
-//                        if(file_exists($img_path)){
-//
-//                            $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-//
-//                            $drawing->setPath($img_path);
-//
-//                            $drawing->setCoordinates($pos);
-//
-//                            $drawing->setResizeProportional(true);
-//
-//                            $drawing->setWidth(40);
-//
-//                            $sheet->getRowDimension($c)->setRowHeight(100);
-//
-//                            $drawing->setHeight(100);
-//
-//                            $drawing->setWorksheet($sheet);
-//                        }
-//                    }
+
                 }
 
                 $sheet->setCellValue('M' . $c, $good['shop_id'] . '/' . $good['goods_id']);
@@ -649,6 +611,7 @@ class WegoController extends \yii\web\Controller
 
         $models = [];
 
+
         foreach ($rows as $row){
 
             $title_en = trim($row[0]);
@@ -660,35 +623,25 @@ class WegoController extends \yii\web\Controller
 
 //            echo $title_en;
 //            echo "\n";
-//            echo $category;
+//            echo $cate;
 //            echo "\n";
 //            echo $sku;
 //            echo "\n";
+//            echo $price;
+//            echo "\n";
 
-            if($title_en){
+            if(strlen($title_en)>0){
 
                 $sex = Yii::$app->brand->parseSex($title_en);
 
                 $formats = json_encode(Yii::$app->brand->clothesSize($title_en,$sex));
 
-//                echo $category;
-//                echo "\n";
                 $category_id = Yii::$app->redis->get('category:'.$cate.'');
 
-//                echo $category_id;
-//                echo "\n";
 
                 $goodM = WegoGoodsList::find()->where(['goods_id' => $sku])->one();
-              //  $models[] = ArrayHelper::toArray($goodM);
 
-//                echo $goodM->title_en;
-//                echo "\n";
-//                echo $title_en;
-//                echo "\n";
-//                echo $category_id;
-//                echo "\n";
-//                echo $sku;
-//                echo "\n";
+
 
                 $goodM->title_en = trim($title_en);
                 $goodM->category_id =  $category_id;
@@ -713,7 +666,7 @@ class WegoController extends \yii\web\Controller
 
         }
 
-        print_r($models);
+        //print_r($models);
         //exit;
 
         $splits = Yii::$app->utils->split($models, 500);
