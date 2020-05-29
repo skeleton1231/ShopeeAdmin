@@ -632,6 +632,13 @@ class WegoController extends \yii\web\Controller
 
             if(strlen($title_en)>0){
 
+                $sku_brr = substr($sku, -6);
+
+                if(strpos($title_en,$sku_brr) === false){
+
+                    $title_en .= " " . $sku_brr;
+                }
+
                 $sex = Yii::$app->brand->parseSex($title_en);
 
                 $formats = json_encode(Yii::$app->brand->clothesSize($title_en,$sex));
