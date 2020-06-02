@@ -29,6 +29,8 @@ class ShopeeComponent extends Component
     public $page_sentinel = '0,0';
     public $order_by_create_date = 'desc';
     public $is_massship = false;
+    public $keyword;
+    public $discount_id;
 
     public $sites = [
         'my', 'ph', 'sg', 'th', 'vn', 'id'
@@ -394,16 +396,26 @@ All products will be shipped from oversea, so please kindly understand the shipp
     public function getRequestURL()
     {
 
-        $this->URL = $this->domain . $this->URI . urldecode($this->queryStr);
+        $this->URL = $this->domain . $this->URI . '?' . urldecode($this->queryStr);
+
+//        echo $this->URL;
+//        echo "\n";
+//        echo $this->COOKIE;
+//        echo "\n";
 
         return $this->URL;
 
     }
 
-    private function execHttp($method = 'GET')
+    private function execHttp($method = 'GET',$params=[])
     {
+        $data = ['http_errors' => false];
 
-        $response = $this->httpClient->request($method, $this->getRequestURL(), ['http_errors' => false]);
+        if($method !== 'GET'){
+            $data['json']= $params;
+        }
+
+        $response = $this->httpClient->request($method, $this->getRequestURL(), $data);
 
         $output = $response->getStatusCode() == 200 ? json_decode($response->getBody(), true) : $response->getStatusCode();
 
@@ -429,6 +441,7 @@ All products will be shipped from oversea, so please kindly understand the shipp
         return $this->execHttp();
     }
 
+
     public function getOrderDetail()
     {
 
@@ -443,6 +456,69 @@ All products will be shipped from oversea, so please kindly understand the shipp
     {
 
 
+    }
+
+    /*
+     * shopee market
+     */
+
+    public function getPromotionIdBySku(){
+
+       // $url1 = 'https://seller.id.shopee.cn/api/marketing/v3/discount//search/?SPC_CDS=a3b5e1a7-1f1c-4e84-a296-4c138aa95603&SPC_CDS_VER=2&keyword=A201910201109448761693%2FI202005241223356660346729&discount_type=ongoing&search_type=item_sku';
+
+        $this->URI = '/api/marketing/v3/discount//search/';
+
+
+        $this->queryStr = http_build_query([
+            'SPC_CDS' => $this->SPC_CDS,
+            'SPC_CDS_VER' => $this->SPC_CDS_VER,
+            'keyword'=>urlencode($this->keyword),
+            'discount_type'=>'ongoing',
+            'search_type'=>'item_sku',
+        ]);
+
+       // $this->URL = 'https://seller.id.shopee.cn/api/marketing/v3/discount//search/?SPC_CDS=418b654c-5606-440d-af44-d829b91d51a5&SPC_CDS_VER=2&keyword=A201910201109448761693%2FI202005241223356660346729&discount_type=ongoing&search_type=item_sku';
+
+        return $this->execHttp();
+
+    }
+
+    public function getItemBySkuInPromo($discount_id){
+
+        //https://seller.id.shopee.cn/api/marketing/v3/discount/nominate/search/
+        //?SPC_CDS=a3b5e1a7-1f1c-4e84-a296-4c138aa95603&SPC_CDS_VER=2&keyword=A201910201109448761693%2FI202005241223356660346729&
+        //discount_id=1071921217&
+        //search_type=item_sku
+
+        $this->URI = '/api/marketing/v3/discount/nominate/search/';
+
+        $this->queryStr = http_build_query([
+            'SPC_CDS' => $this->SPC_CDS,
+            'SPC_CDS_VER' => $this->SPC_CDS_VER,
+            'keyword'=>urlencode($this->keyword),
+            'discount_id'=>$discount_id,
+            'search_type'=>'item_sku',
+        ]);
+
+        return $this->execHttp();
+    }
+
+    public function deletePromoBySku($discount_id,$itemid){
+
+        //https://seller.id.shopee.cn/api/marketing/v3/discount/nominate/?SPC_CDS=a3b5e1a7-1f1c-4e84-a296-4c138aa95603&SPC_CDS_VER=2
+        $this->URI = '/api/marketing/v3/discount/nominate/';
+        //{"discount_id":1071921217,"itemid":7935693280}
+
+        $this->queryStr = http_build_query([
+            'SPC_CDS' => $this->SPC_CDS,
+            'SPC_CDS_VER' => $this->SPC_CDS_VER,
+        ]);
+
+        $args = [];
+        $args['discount_id'] = $discount_id;
+        $args['itemid'] = $itemid;
+
+        $this->execHttp('DELETE',$args);
     }
 
 
