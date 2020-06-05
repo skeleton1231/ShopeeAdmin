@@ -302,6 +302,8 @@ class WegoController extends \yii\web\Controller
         foreach ($goods as $k => $good) {
 
             $c = $k + 2;
+
+
             $sheet->setCellValue('A' . $c, 10000);
             $sheet->setCellValue('B' . $c, $good['title']);
             $sheet->setCellValue('C' . $c, $good['title_en']);
@@ -467,7 +469,7 @@ class WegoController extends \yii\web\Controller
     public function actionWomenapparels($shop_id)
     {
 
-        $command = Yii::$app->db->createCommand("SELECT * FROM `wego_goods_list` WHERE `shop_id` = '{$shop_id}' AND `price`!=0");
+        $command = Yii::$app->db->createCommand("SELECT * FROM `wego_goods_list` WHERE `shop_id` = '{$shop_id}' AND `price`!=0 AND `is_translated` != 2");
         $goods = $command->queryAll();
 
         $items = [];
