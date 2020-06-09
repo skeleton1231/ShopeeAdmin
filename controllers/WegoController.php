@@ -692,14 +692,9 @@ class WegoController extends \yii\web\Controller
         }
 
 
-
-
-        //print_r($errors);
-
     }
 }
 
-///^[a-zA-Z_\u4e00-\u9fa5][a-zA-Z0-9_\u4e00-\u9fa5]*$/
 
 
 

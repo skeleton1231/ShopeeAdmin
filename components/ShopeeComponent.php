@@ -454,7 +454,7 @@ All products will be shipped from oversea, so please kindly understand the shipp
     }
 
 
-    public function getProducts($num)
+    public function getProducts($num=1,$type='live')
     {
 
         //$url = 'https://seller.sg.shopee.cn/api/v3/product/page_product_list/?SPC_CDS=84e762fd-7603-4819-afe8-6776320f2d60&SPC_CDS_VER=2&page_number=1&page_size=24&list_type=&search_type=name&source=seller_center&version=3.1.0';
@@ -466,13 +466,13 @@ All products will be shipped from oversea, so please kindly understand the shipp
             'SPC_CDS_VER' => $this->SPC_CDS_VER,
             'page_number' => $num,
             'page_size'=>48,
-            'list_type'=>'',
+            'list_type'=>$type,
             'search_type'=>'name',
             'source'=>'seller_center',
             'version'=>'3.1.0'
         ]);
 
-
+        return $this->execHttp();
 
     }
 
@@ -538,6 +538,8 @@ All products will be shipped from oversea, so please kindly understand the shipp
 
         $this->execHttp('DELETE',$args);
     }
+
+
 
 
 
