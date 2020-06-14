@@ -188,7 +188,7 @@ class WegoController extends \yii\web\Controller
 
     public function actionTitle($shop_id)
     {
-        $command = Yii::$app->db->createCommand("SELECT * FROM `wego_goods_list` WHERE `shop_id` = '{$shop_id}' AND `title_en`='' AND `is_translated`=0");
+        $command = Yii::$app->db->createCommand("SELECT * FROM `wego_goods_list` WHERE `shop_id` = '{$shop_id}' AND `is_translated`=0");
         $goods = $command->queryAll();
 
         Yii::$app->brand->setBrands();
@@ -196,7 +196,7 @@ class WegoController extends \yii\web\Controller
         Yii::$app->brand->setMaterial();
 
         $items = [];
-
+	
         foreach ($goods as $good) {
 
             $item = Yii::$app->brand->parseTitle($good);

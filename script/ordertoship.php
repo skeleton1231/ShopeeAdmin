@@ -12,15 +12,15 @@ $rd->expire('clock', 600);
 
 $client = new \GuzzleHttp\Client();
 
-$cates = ['Toys', 'Luxury', 'Shoes', 'Sex', 'Electronic'];
+$cates = ['Luxury', 'Shoes', 'Sex', 'Electronic'];
 
 foreach ($cates as $cat){
-    $uri = 'http://127.0.0.1/order/toship?type=' . $cat;
+    $uri = 'http://127.0.0.1:8081/order/toship?type=' . $cat;
     $response = $client->get($uri);
     echo $response->getBody();
 	echo "\n";
     sleep(10);
 }
 
-$client->get('http://127.0.0.1/order/excel');
+$client->get('http://127.0.0.1:8081/order/excel');
 
