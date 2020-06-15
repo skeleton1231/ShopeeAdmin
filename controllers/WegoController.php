@@ -302,6 +302,8 @@ class WegoController extends \yii\web\Controller
         foreach ($goods as $k => $good) {
 
             $c = $k + 2;
+
+
             $sheet->setCellValue('A' . $c, 10000);
             $sheet->setCellValue('B' . $c, $good['title']);
             $sheet->setCellValue('C' . $c, $good['title_en']);
@@ -690,14 +692,9 @@ class WegoController extends \yii\web\Controller
         }
 
 
-
-
-        //print_r($errors);
-
     }
 }
 
-///^[a-zA-Z_\u4e00-\u9fa5][a-zA-Z0-9_\u4e00-\u9fa5]*$/
 
 
 

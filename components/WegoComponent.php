@@ -124,6 +124,7 @@ Class WegoComponent extends Component
                         $data['price'] = @$item['price'] ? $item['price'] : 0;
 
                         $formats = [];
+
 						
 						if(@$item['formats']){
 							
@@ -132,7 +133,6 @@ Class WegoComponent extends Component
 								$formats[] = $ft['formatName'];
 							}
 						}
-						
 
                         $data['formats'] = json_encode($formats);
 

@@ -1,7 +1,11 @@
 <?php
 namespace app\modules\shopee\controllers;
 
+use app\models\ProdutJson;
 use yii\web\Controller;
+use Yii;
+use app\models\SellerAccounts;
+use yii\helpers\ArrayHelper;
 
 class ProductController extends Controller{
 
@@ -23,8 +27,64 @@ class ProductController extends Controller{
 
     }
 
-    public function actionList($account=''){
+    public function actionList($account='',$type='live'){
 
+        $file = Yii::$app->basePath . '/data/json/';
+
+        if (!file_exists($file)) {
+            mkdir($file, 0777, true);
+        }
+
+        $path = $file . $account . '.json';
+
+
+        $page_size=48;
+        $seller = SellerAccounts::find()->where(['username' => $account])->one();
+        $seller = ArrayHelper::toArray($seller);
+
+        Yii::$app->shopee->setParams($seller);
+
+        $res = Yii::$app->shopee->getProducts(1);
+
+        $page = 0;
+
+        if(isset($res['data']['page_info'])){
+
+            $total = $res['data']['page_info']['total'];
+
+            $page = ceil($total/$page_size);
+        }
+
+        if($page){
+
+            $list = [];
+
+            for($i=1;$i<=$page;$i++){
+
+                $res = Yii::$app->shopee->getProducts($i,$type);
+
+                usleep(100);
+
+                if($res['message']=='success'){
+
+                    $list = array_merge($list, $res['data']['list']);
+                }
+            }
+
+
+            $json = json_encode($list);
+
+            $file   = fopen($path, "w");
+
+            $pieces = str_split($json, 1024 * 4);
+
+            foreach ($pieces as $piece) {
+                fwrite($file, $piece, strlen($piece));
+            }
+
+            fclose($file);
+
+        }
 
     }
 

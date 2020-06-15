@@ -35,3 +35,9 @@ tests/_support/_generated
 
 
 /data
+
+/vendor.zip
+
+
+/runtime/
+/laradock/
