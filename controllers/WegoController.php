@@ -196,7 +196,7 @@ class WegoController extends \yii\web\Controller
         Yii::$app->brand->setMaterial();
 
         $items = [];
-
+	
         foreach ($goods as $good) {
 
             $item = Yii::$app->brand->parseTitle($good);

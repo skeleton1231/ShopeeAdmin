@@ -32,8 +32,8 @@ class OrderController extends \yii\web\Controller
 
         foreach ($accounts as $account) {
 
-//            $name = 'puguma.th';
-//            $site = 'th';
+           // $name = 'chaoqin.my';
+           // $site = 'my';
             $name = $account['username'];
             $site = $account['site'];
 
@@ -48,9 +48,13 @@ class OrderController extends \yii\web\Controller
 
                 //print_r($auth);
 
-                $uri = 'https://seller.' . $site . '.shopee.cn/api/v3/order/get_order_list/?SPC_CDS=' . $auth["SPC_CDS"] . '&SPC_CDS_VER=2&limit=40&offset=0&order_by_payment_date=desc&is_massship=false&list_type=toship&shipping_center_status=pickup_pending';
-                //echo $uri;
-                //exit;
+                $uri = 'https://seller.' . $site . '.shopee.cn/api/v3/order/get_simple_order_ids/?SPC_CDS=' . $auth["SPC_CDS"] . '&SPC_CDS_VER=2&page_size=40&page_number=1&source=toship&total=0&flip_direction=ahead&page_sentinel=0,0&sort_by=create_date_desc&backend_offset=&shipping_center_status=pickup_pending';
+				
+               // echo $uri;
+				//echo "\n";
+				//echo $auth['COOKIE'];
+               // exit;
+				
                 try{
                     $response = $client->request('GET', $uri,['http_errors' => false]);
 
@@ -60,11 +64,33 @@ class OrderController extends \yii\web\Controller
                     }
 
                     $response = json_decode($response->getBody(), true);
+					
+				//{"orders":[{"order_id":45765565783715,"shop_id":128871774,"region_id":"MY"},{"order_id":45640906300157,"shop_id":128871774,"region_id":"MY"}],"from_seller_data":false,"source":"toship"}
+				
+					
+					$payload = json_encode(["orders"=>$response['data']['orders'],"from_seller_data"=>false,"source"=>"toship"]);
+					
 
                     if ($response['data']['orders']) {
+						
+						$payload = ["orders"=>$response['data']['orders'],"from_seller_data"=>false,"source"=>"toship"];
 
+						$order_uri = 'https://seller.' . $site .'.shopee.cn/api/v3/order/get_order_list_by_order_ids_multi_shop/?SPC_CDS=' . $auth["SPC_CDS"] . '&SPC_CDS_VER=2';
+
+
+						/*echo $order_uri;
+						echo "\n";
+						echo $auth['COOKIE'];
+						echo "\n";
+						echo $payload;
+						exit;*/
+						$client = new \GuzzleHttp\Client(['headers' => ['cookie' => $auth['COOKIE'],'content-type'=>'application/json']]);
+						$response = $client->request('POST', $order_uri,['http_errors' => false,'json'=>$payload]);
+						
+						$response = json_decode($response->getBody(), true);
+						
                         $orders = $response['data']['orders'];
-
+						
                         foreach ($orders as $order) {
 
                             if ($order['shipping_traceno'] == '') {
@@ -160,13 +186,19 @@ class OrderController extends \yii\web\Controller
         $key = 'orders:' . $type . ':' . date("Ymd");
         Yii::$app->redis->set($key, $res);
 
-        echo $res;
+        echo Yii::$app->redis->get($key);
+		
+		echo "\n";
+		
+		echo $key;
     }
 
     public function actionExcel()
     {
 
-        $cates = ['Toys', 'Luxury', 'Shoes', 'Sex', 'Electronic'];
+        //$cates = ['Toys', 'Luxury', 'Shoes', 'Sex', 'Electronic'];
+		
+		$cates = ['luxury'];
 
         foreach ($cates as $type) {
 
@@ -177,9 +209,9 @@ class OrderController extends \yii\web\Controller
             $filename = \Yii::$app->basePath . "/web/xlsx/$name.xlsx";
 
             @unlink($filename);
-
+			
             $res = json_decode(Yii::$app->redis->get($key), true);
-
+			
             $orders = $res['data'];
 
             $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
