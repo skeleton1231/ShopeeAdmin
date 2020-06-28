@@ -206,6 +206,7 @@ class WegoController extends \yii\web\Controller
             $goodM->formats = $item['formats'];
             $goodM->title_en = $item['title_en'];
             $goodM->cate = $item['cate'];
+			$goodM->is_translated = 1;
             $goodM->update();
 
             $items[] = $item;
@@ -497,8 +498,7 @@ class WegoController extends \yii\web\Controller
     {
 
         $sql = 'SELECT * FROM `wego_goods_list` 
-                WHERE `shop_id` = "' . $shop_id . '" 
-                AND `price`!=0 AND `title` !=""';
+                WHERE `shop_id` = "' . $shop_id . '" ';
 
         if ($is_translated !== '') {
             $sql .= ' AND `is_translated` = ' . $is_translated . '';
@@ -521,6 +521,8 @@ class WegoController extends \yii\web\Controller
         $orderby = ' ORDER BY `cate`';
 
         $sql .= $orderby;
+		
+		//echo $sql;exit;
 
         $command = Yii::$app->db->createCommand($sql);
         $goods = $command->queryAll();
@@ -586,7 +588,7 @@ class WegoController extends \yii\web\Controller
 
     }
 
-    public function actionUpload($name,$category='category_id'){
+    public function actionUpload($name,$category='category_id',$format=1){
 
         $file = Yii::$app->basePath . '/data/xlsx/upload/'.$name.'.xlsx';
 
@@ -612,6 +614,7 @@ class WegoController extends \yii\web\Controller
         $errors = [];
 
         $models = [];
+		
 
 
         foreach ($rows as $row){
@@ -635,22 +638,28 @@ class WegoController extends \yii\web\Controller
             if(strlen($title_en)>0){
 
                 $sku_brr = substr($sku, -6);
-
+				
                 if(strpos($title_en,$sku_brr) === false){
 
                     $title_en .= " " . $sku_brr;
                 }
+				
+				
+				if($format==1){
+					
+					$sex = Yii::$app->brand->parseSex($title_en);
 
-                $sex = Yii::$app->brand->parseSex($title_en);
+					$formats = json_encode(Yii::$app->brand->clothesSize($title_en,$sex));
 
-                $formats = json_encode(Yii::$app->brand->clothesSize($title_en,$sex));
-
+				}
+				else{
+					
+					$formats = '[]';
+				}
+				
                 $category_id = Yii::$app->redis->get('category:'.$cate.'');
-
-
+			
                 $goodM = WegoGoodsList::find()->where(['goods_id' => $sku])->one();
-
-
 
                 $goodM->title_en = trim($title_en);
                 $goodM->category_id =  $category_id;
@@ -663,8 +672,12 @@ class WegoController extends \yii\web\Controller
                 $goodM->is_translated = 2;
 
                 $goodM->update();
+				
+				if($price != 0){
+					
+					$models[] = ArrayHelper::toArray($goodM);
 
-                $models[] = ArrayHelper::toArray($goodM);
+				}
 
             }
             else{
