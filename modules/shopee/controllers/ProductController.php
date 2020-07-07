@@ -35,7 +35,7 @@ class ProductController extends Controller{
             mkdir($file, 0777, true);
         }
 
-        $path = $file . $account . '.json';
+        $path = $file . $account . '-' . $type . '.json';
 
 
         $page_size=48;
