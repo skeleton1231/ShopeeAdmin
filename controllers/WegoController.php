@@ -112,6 +112,7 @@ class WegoController extends \yii\web\Controller
                 $goodM->title_en = $good['title_en'];
                 $goodM->cate = $good['cate'];
                 $goodM->update();
+				$goodM->is_translated = 1;
                 $items[] = $good;
             }
 
@@ -498,7 +499,7 @@ class WegoController extends \yii\web\Controller
     {
 
         $sql = 'SELECT * FROM `wego_goods_list` 
-                WHERE `shop_id` = "' . $shop_id . '" ';
+                WHERE `shop_id` = "' . $shop_id . '" AND `title` != "" ';
 
         if ($is_translated !== '') {
             $sql .= ' AND `is_translated` = ' . $is_translated . '';
@@ -522,12 +523,8 @@ class WegoController extends \yii\web\Controller
 
         $sql .= $orderby;
 		
-		//echo $sql;exit;
-
         $command = Yii::$app->db->createCommand($sql);
         $goods = $command->queryAll();
-
-
 
         if ($goods) {
 
