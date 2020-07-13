@@ -24,6 +24,52 @@ class WegoController extends \yii\web\Controller
         'A2017110114531608903' => 'kelenvzhuang',
         'A201805191935118730125778' => 'baobao'
     ];
+	
+	public function actionBag($goods_id)
+    {
+
+        $good = ArrayHelper::toArray(WegoGoodsList::find()->where(['goods_id' => $goods_id])->one());
+
+
+        $good = Yii::$app->brand->parseBags($good);
+		
+
+        if ($good['is_translated'] != 1) {
+
+            $goodM = WegoGoodsList::find()->where(['goods_id' => $good['goods_id']])->one();
+            $goodM->title_en = $good['title_en'];
+            $rs = $goodM->update();
+
+            echo $rs;
+        }
+    }
+	
+	public function actionBags($shop_id)
+    {
+
+        $command = Yii::$app->db->createCommand("SELECT * FROM `wego_goods_list` WHERE `shop_id` = '{$shop_id}' AND `price`!=0");
+        $goods = $command->queryAll();
+
+        $items = [];
+
+        foreach ($goods as $good) {
+
+            $good = Yii::$app->brand->parseBags($good);
+
+            $goodM = WegoGoodsList::find()->where(['goods_id' => $good['goods_id']])->one();
+
+            $goodM->title_en = $good['title_en'];
+			$goodM->formats = $good['formats'];
+            $goodM->update();
+
+            $items[] = $good;
+            //}
+        }
+
+        print_r($items);
+
+    }
+
 
     public function actionSport($goods_id)
     {

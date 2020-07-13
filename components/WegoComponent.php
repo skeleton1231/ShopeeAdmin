@@ -39,7 +39,7 @@ Class WegoComponent extends Component
         $this->queryStr = urldecode(http_build_query($arr));
 
         $response = $client->request('GET', $this->getUrl(), ['http_errors' => false]);
-
+		
         if ($response->getStatusCode() != 200) {
 
             echo $response->getStatusCode();
