@@ -78,6 +78,15 @@ Class BrandComponent extends Component
         'Flip-flop Shoes' => ['拖鞋', '人字拖']
     ];
 
+    public $bags_category= [
+
+        'Crossbody Bags' => ['肩','挎包'],
+        'Backpacks' => ['双肩包','背包'],
+        'Tote Bags' => ['手提',],
+        'HandBags' => ['手包',],
+
+    ];
+
     public function parseBrandV2($title){
 
         $brand = '';
@@ -300,19 +309,19 @@ Class BrandComponent extends Component
             }
         }
 
-        if(!$category){
-
-            if ($cates == 'shoes_category') {
-
-                $category = 'Sneakers Low Tops Shoes';
-
-            } else {
-
-                $category = 'T-Shirts';
-
-            }
-
-        }
+//        if(!$category){
+//
+//            if ($cates == 'shoes_category') {
+//
+//                $category = 'Sneakers Low Tops Shoes';
+//
+//            } else {
+//
+//                $category = 'T-Shirts';
+//
+//            }
+//
+//        }
 
         return $category;
 
@@ -402,6 +411,7 @@ Class BrandComponent extends Component
             'Miu Miu'=>[],
             'Balmain'=>['巴尔曼','巴尔'],
             'Maje'=>[],
+            'MCM'=>[],
 
             //运动
             'Nike' => ['耐克'],
@@ -454,9 +464,9 @@ Class BrandComponent extends Component
 
     }
 
-    public function parseSex($title)
+    public function parseSex($title,$sex="Men's")
     {
-        $sex = "Men's";
+     //   $sex = "Men's";
         //查找sex
         $men = strpos($title, '男');
         $women = strpos($title, '女');
@@ -477,10 +487,65 @@ Class BrandComponent extends Component
         return $sex;
     }
 
+    public function parseBags($good,$brand){
+
+        $this->setBrands();
+        $this->setCategories();
+        $this->setMaterial();
+
+        //\d+[\s\S]*\d+[\s\S]*\d+
+        //
+        $good['title'] = str_replace('，', ',', $good['title']);
+        $good['title'] = str_replace('～', '-', $good['title']);
+        $good['title'] = str_replace('：', ':', $good['title']);
+        $good['title'] = str_replace('—', '-', $good['title']);
+        $good['title'] = str_replace(':', '', $good['title']);
+
+      //  $good['title'] = preg_replace('#[\x{4e00}-\x{9fa5}]#u', '', $good['title']);
+       // $good['title'] = preg_replace('/([\x80-\xff]*)/i', '', $good['title']);
+        $good['title'] = preg_replace('/[A-Z][0-9]{5}/', '', $good['title']);
+
+
+        $good['title'] = strtolower($good['title']);
+
+       // $brand = $this->parseBrandV2($good['title']);
+
+        $category = $this->pareseCategoryV2($good['title'], 'bags_category');
+
+        if(!$category){
+
+            $category = 'Bag';
+        }
+
+        $size = '';
+
+        if(preg_match('/\d+[\s\S]*\d+[\s\S]*\d+/',$good['title'],$match)){
+
+            $size = $match[0];
+        }
+
+        $sex = $this->parseSex($good['title'],"Women's");
+
+        $code = substr($good['shop_id'] . '/' . $good['goods_id'], -6);
+
+        $good['title_en'] = 'Original ' . Date('Y') . ' ' . $brand . ' ' . $sex . ' ' . $category . ' ';
+
+        if($size){
+
+            $good['title_en'] .=  $size . ' ' . $code;
+        }
+        else{
+
+            $good['title_en'] .= $code;
+        }
+
+
+        return $good;
+
+    }
+
     public function parseTitle($good)
     {
-
-
         $m = 0;
 
         $item = $good;
@@ -500,7 +565,6 @@ Class BrandComponent extends Component
         $title = preg_replace('/[A-Z][0-9]-[0-9]{5}/','',$title);
 
         $segs = Yii::$app->jieba->parse($title);
-
 
         $item['brand'] = $this->parseBrand($segs, $item['price']);
 
@@ -533,7 +597,7 @@ Class BrandComponent extends Component
         $this->clothesSize($title,$item['sex']);
 
         //查找尺寸
-//        if (preg_match_all('/M-[\w+][A-Z]{2}/', trim($title), $sizeArr)) {
+//        if (preg_match_all('/M-[\w+][A- Z]{2}/', trim($title), $sizeArr)) {
 //
 //            $format_str = $sizeArr[0][0];
 //
@@ -978,6 +1042,11 @@ Class BrandComponent extends Component
 
         return $formats;
 
+    }
+
+    public function glassesSize($title){
+
+        $regx = '\d+[*]\d+[*]\d+';
     }
 
     public function parseWomenApparel($good){

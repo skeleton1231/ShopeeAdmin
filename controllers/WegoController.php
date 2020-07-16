@@ -25,6 +25,64 @@ class WegoController extends \yii\web\Controller
         'A201805191935118730125778' => 'baobao'
     ];
 
+    public function actionBag($goods_id)
+    {
+
+        $good = ArrayHelper::toArray(WegoGoodsList::find()->where(['goods_id' => $goods_id])->one());
+
+
+        $good = Yii::$app->brand->parseBags($good);
+
+
+        if ($good['is_translated'] != 1) {
+
+            $goodM = WegoGoodsList::find()->where(['goods_id' => $good['goods_id']])->one();
+
+            $goodM->formats = $good['formats'];
+            $goodM->title_en = $good['title_en'];
+            $goodM->cate = $good['cate'];
+            $rs = $goodM->update();
+
+            echo $rs;
+        }
+    }
+
+
+    public function actionBags($shop_id)
+    {
+
+        $brands = ['MCM'=>'A201809281053489030076545','Gucci'=>'A2018010612332803328','Celine'=>'A202005091831330920350205','LV Louis Vuitton'=>'A201901052210110110169239','Chanel'=>'A202006081335465760274077','Dior'=>'A201809281053489030076545'];
+
+        $brand = array_search($shop_id,$brands);
+
+        if($brand){
+
+            $command = Yii::$app->db->createCommand("SELECT * FROM `wego_goods_list` WHERE `shop_id` = '{$shop_id}' AND `price`!=0");
+            $goods = $command->queryAll();
+
+            $items = [];
+
+            foreach ($goods as $good) {
+
+                $good = Yii::$app->brand->parseBags($good,$brand);
+
+                $goodM = WegoGoodsList::find()->where(['goods_id' => $good['goods_id']])->one();
+                $goodM->title_en = $good['title_en'];
+                $goodM->update();
+
+                $items[] = $good;
+
+
+            }
+
+            print_r($items);
+
+        }
+
+
+
+    }
+
     public function actionSport($goods_id)
     {
 
@@ -92,7 +150,7 @@ class WegoController extends \yii\web\Controller
 
     }
 
-    public function actionShoes($shop_id,$start='',$end='')
+    public function actionShoes($shop_id, $start = '', $end = '')
     {
 
         $command = Yii::$app->db->createCommand("SELECT * FROM `wego_goods_list` WHERE `shop_id` = '{$shop_id}' AND `is_translated`=0 AND `price`!=0");
@@ -112,7 +170,7 @@ class WegoController extends \yii\web\Controller
                 $goodM->title_en = $good['title_en'];
                 $goodM->cate = $good['cate'];
                 $goodM->update();
-				$goodM->is_translated = 1;
+                $goodM->is_translated = 1;
                 $items[] = $good;
             }
 
@@ -197,7 +255,7 @@ class WegoController extends \yii\web\Controller
         Yii::$app->brand->setMaterial();
 
         $items = [];
-	
+
         foreach ($goods as $good) {
 
             $item = Yii::$app->brand->parseTitle($good);
@@ -208,7 +266,7 @@ class WegoController extends \yii\web\Controller
             $goodM->title_en = $item['title_en'];
             $goodM->cate = $item['cate'];
 
-			$goodM->is_translated = 1;
+            $goodM->is_translated = 1;
             $goodM->update();
 
             $items[] = $item;
@@ -257,7 +315,7 @@ class WegoController extends \yii\web\Controller
         $command = Yii::$app->db->createCommand($sql);
         $goods = $command->queryAll();
 
-        if(!$goods){
+        if (!$goods) {
 
             echo "no goods";
             exit;
@@ -270,7 +328,7 @@ class WegoController extends \yii\web\Controller
 
             foreach (Yii::$app->shopee->sites as $site) {
 
-                Yii::$app->shopee->generateTemplate($split, $name, $site, $category,$k);
+                Yii::$app->shopee->generateTemplate($split, $name, $site, $category, $k);
 
             }
 
@@ -496,7 +554,7 @@ class WegoController extends \yii\web\Controller
     }
 
 
-    public function actionEasytemplate($shop_id, $is_translated = '', $start = '', $end = '',$category='women_apparel_category')
+    public function actionEasytemplate($shop_id, $is_translated = '', $start = '', $end = '', $category = 'women_apparel_category')
     {
 
         $sql = 'SELECT * FROM `wego_goods_list` 
@@ -523,7 +581,7 @@ class WegoController extends \yii\web\Controller
         $orderby = ' ORDER BY `cate`';
 
         $sql .= $orderby;
-		
+
         $command = Yii::$app->db->createCommand($sql);
         $goods = $command->queryAll();
 
@@ -543,9 +601,9 @@ class WegoController extends \yii\web\Controller
             $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
 
-            $columns = ['title', 'title_en', 'category', 'img1', 'img2', 'img3', 'img4', 'img5', 'img6', 'img7', 'img8', 'img9', 'sku','price'];
+            $columns = ['title', 'title_en', 'category', 'img1', 'img2', 'img3', 'img4', 'img5', 'img6', 'img7', 'img8', 'img9', 'sku', 'price'];
 
-            $imgs_col = ['D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L','M','N'];
+            $imgs_col = ['D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N'];
 
             $sheet
                 ->fromArray(
@@ -586,9 +644,10 @@ class WegoController extends \yii\web\Controller
 
     }
 
-    public function actionUpload($name,$category='category_id',$format=1){
+    public function actionUpload($name, $category = 'category_id', $format = 1)
+    {
 
-        $file = Yii::$app->basePath . '/data/xlsx/upload/'.$name.'.xlsx';
+        $file = Yii::$app->basePath . '/data/xlsx/upload/' . $name . '.xlsx';
 
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
         $spreadsheet = $reader->load($file);
@@ -612,15 +671,14 @@ class WegoController extends \yii\web\Controller
         $errors = [];
 
         $models = [];
-		
 
 
-        foreach ($rows as $row){
+        foreach ($rows as $row) {
 
             $title_en = trim($row[0]);
             $cate = trim($row[1]);
-            $sku = explode("/",trim($row[2]))[1];
-            if(isset($row[3])){
+            $sku = explode("/", trim($row[2]))[1];
+            if (isset($row[3])) {
                 $price = trim($row[3]);
             }
 
@@ -633,52 +691,50 @@ class WegoController extends \yii\web\Controller
 //            echo $price;
 //            echo "\n";
 
-            if(strlen($title_en)>0){
+            if (strlen($title_en) > 0) {
 
                 $sku_brr = substr($sku, -6);
-				
-                if(strpos($title_en,$sku_brr) === false){
+
+                if (strpos($title_en, $sku_brr) === false) {
 
                     $title_en .= " " . $sku_brr;
                 }
-				
-				
-				if($format==1){
-					
-					$sex = Yii::$app->brand->parseSex($title_en);
 
-					$formats = json_encode(Yii::$app->brand->clothesSize($title_en,$sex));
 
-				}
-				else{
-					
-					$formats = '[]';
-				}
-				
-                $category_id = Yii::$app->redis->get('category:'.$cate.'');
-			
+                if ($format == 1) {
+
+                    $sex = Yii::$app->brand->parseSex($title_en);
+
+                    $formats = json_encode(Yii::$app->brand->clothesSize($title_en, $sex));
+
+                } else {
+
+                    $formats = '[]';
+                }
+
+                $category_id = Yii::$app->redis->get('category:' . $cate . '');
+
                 $goodM = WegoGoodsList::find()->where(['goods_id' => $sku])->one();
 
                 $goodM->title_en = trim($title_en);
-                $goodM->category_id =  $category_id;
+                $goodM->category_id = $category_id;
                 $goodM->formats = $formats;
 
-                if(isset($price)){
+                if (isset($price)) {
                     $goodM->price = $price;
                 }
 
                 $goodM->is_translated = 2;
 
                 $goodM->update();
-				
-				if($price != 0){
-					
-					$models[] = ArrayHelper::toArray($goodM);
 
-				}
+                if ($price != 0) {
 
-            }
-            else{
+                    $models[] = ArrayHelper::toArray($goodM);
+
+                }
+
+            } else {
 
                 $errors[] = $row;
 
@@ -696,7 +752,7 @@ class WegoController extends \yii\web\Controller
 
             foreach (Yii::$app->shopee->sites as $site) {
 
-                Yii::$app->shopee->generateTemplate($split, $name, $site, $category,$k);
+                Yii::$app->shopee->generateTemplate($split, $name, $site, $category, $k);
 
             }
 
