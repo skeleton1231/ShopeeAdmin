@@ -42,3 +42,7 @@ tests/_support/_generated
 /runtime/
 /laradock/
 /config/
+<<<<<<< HEAD
+=======
+/web/
+>>>>>>> be1dd8b528f89e38997f479ba63b02b146244d33

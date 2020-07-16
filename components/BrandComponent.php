@@ -129,7 +129,6 @@ Class BrandComponent extends Component
                             $brand = $brand_en;
                         }
                     }
-
                 }
 
             }
@@ -466,7 +465,7 @@ Class BrandComponent extends Component
 
     public function parseSex($title,$sex="Men's")
     {
-     //   $sex = "Men's";
+        //   $sex = "Men's";
         //查找sex
         $men = strpos($title, '男');
         $women = strpos($title, '女');
@@ -500,22 +499,25 @@ Class BrandComponent extends Component
         $good['title'] = str_replace('：', ':', $good['title']);
         $good['title'] = str_replace('—', '-', $good['title']);
         $good['title'] = str_replace(':', '', $good['title']);
-
-      //  $good['title'] = preg_replace('#[\x{4e00}-\x{9fa5}]#u', '', $good['title']);
-       // $good['title'] = preg_replace('/([\x80-\xff]*)/i', '', $good['title']);
         $good['title'] = preg_replace('/[A-Z][0-9]{5}/', '', $good['title']);
-
+        $good['title'] = str_replace($good['price'], '', $good['title']);
 
         $good['title'] = strtolower($good['title']);
 
-       // $brand = $this->parseBrandV2($good['title']);
+        //$brand = $this->parseBrandV2($good['title']);
 
         $category = $this->pareseCategoryV2($good['title'], 'bags_category');
+
 
         if(!$category){
 
             $category = 'Bag';
         }
+
+        $sex = $this->parseSex($good['title'],"Women's");
+
+        $good['title'] = preg_replace('#[\x{4e00}-\x{9fa5}]#u', '', $good['title']);
+        $good['title'] = preg_replace('/([\x80-\xff]*)/i', '', $good['title']);
 
         $size = '';
 
@@ -523,8 +525,6 @@ Class BrandComponent extends Component
 
             $size = $match[0];
         }
-
-        $sex = $this->parseSex($good['title'],"Women's");
 
         $code = substr($good['shop_id'] . '/' . $good['goods_id'], -6);
 
@@ -539,6 +539,9 @@ Class BrandComponent extends Component
             $good['title_en'] .= $code;
         }
 
+        $good['title_en'] = ucwords($good['title_en']);
+
+        $good['formats'] = '[]';
 
         return $good;
 
@@ -557,7 +560,7 @@ Class BrandComponent extends Component
         //-2020
 
         $title = str_replace('~', '', $item['title']);
-       // $title = str_replace('-', '', $title);
+        // $title = str_replace('-', '', $title);
         $title = str_replace('*', '', $title);
         $title = str_replace('&', '', $title);
         $title = str_replace('20SS', '', $title);
@@ -712,7 +715,7 @@ Class BrandComponent extends Component
             }
         }
 
-      //  $seg_list = Yii::$app->jieba->parse($good['title']);
+        //  $seg_list = Yii::$app->jieba->parse($good['title']);
 
         $this->setBrands();
         $this->setCategories();
@@ -1111,7 +1114,7 @@ Class BrandComponent extends Component
             $end = (int)$size_arr[1];
             for ($i = $start; $i <= $end; $i++) {
                 //if ($i < ) {
-                    $formats[] = $i;
+                $formats[] = $i;
                 //}
             }
 
@@ -1172,7 +1175,7 @@ Class BrandComponent extends Component
 
 
 
-      //  $category_str = implode(' ', $category);
+        //  $category_str = implode(' ', $category);
 
         $good['formats'] = json_encode($formats);
         $good['cate'] = $category;
