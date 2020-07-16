@@ -44,55 +44,6 @@ class WegoController extends \yii\web\Controller
         }
     }
 	
-	public function actionBags($shop_id)
-    {
-
-        $command = Yii::$app->db->createCommand("SELECT * FROM `wego_goods_list` WHERE `shop_id` = '{$shop_id}' AND `price`!=0");
-        $goods = $command->queryAll();
-
-        $items = [];
-
-        foreach ($goods as $good) {
-
-            $good = Yii::$app->brand->parseBags($good);
-
-            $goodM = WegoGoodsList::find()->where(['goods_id' => $good['goods_id']])->one();
-
-            $goodM->title_en = $good['title_en'];
-			$goodM->formats = $good['formats'];
-            $goodM->update();
-
-            $items[] = $good;
-            //}
-        }
-
-        print_r($items);
-
-    }
-
-
-    public function actionBag($goods_id)
-    {
-
-        $good = ArrayHelper::toArray(WegoGoodsList::find()->where(['goods_id' => $goods_id])->one());
-
-
-        $good = Yii::$app->brand->parseBags($good);
-
-
-        if ($good['is_translated'] != 1) {
-
-            $goodM = WegoGoodsList::find()->where(['goods_id' => $good['goods_id']])->one();
-
-            $goodM->formats = $good['formats'];
-            $goodM->title_en = $good['title_en'];
-            $goodM->cate = $good['cate'];
-            $rs = $goodM->update();
-
-            echo $rs;
-        }
-    }
-
 
     public function actionBags($shop_id)
     {
