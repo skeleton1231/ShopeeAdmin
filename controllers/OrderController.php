@@ -90,8 +90,9 @@ class OrderController extends \yii\web\Controller
 						$response = json_decode($response->getBody(), true);
 						
                         $orders = $response['data']['orders'];
-						
-                        foreach ($orders as $order) {
+						if($orders){
+							
+							foreach ($orders as $order) {
 
                             if ($order['shipping_traceno'] == '') {
 
@@ -163,6 +164,8 @@ class OrderController extends \yii\web\Controller
 
                         }
                     }
+						}
+                     
                 }
                 catch(ClientErrorResponseException  $e){
 

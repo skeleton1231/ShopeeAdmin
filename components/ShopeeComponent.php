@@ -187,6 +187,7 @@ All products will be shipped from oversea, so please kindly understand the shipp
     public $bags_category = [];
 
 
+
     public $profit = [
         'my' => 1.2,
         'ph' => 18,
