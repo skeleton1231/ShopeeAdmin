@@ -162,7 +162,7 @@ All products will be shipped from oversea, so please kindly understand the shipp
         'Hoodies' => ['my' => '6574', 'ph' => '6866', 'th' => '8660', 'sg' => '11476', 'vn' => '8609'],
         'Sweater' => ['my' => '6570', 'ph' => '21527', 'th' => '8656', 'sg' => '11476', 'vn' => '8614'],
         'Vest' => ['my' => '20844', 'ph' => '6870', 'th' => '8658', 'sg' => '19344', 'vn' => '8615'],
-        'Suits' => ['my' => '19205', 'ph' => '21533', 'th' => '8661', 'sg' => '11475', 'vn' => '10922'],
+        'Suits' => ['my' => '19205', 'ph' => '21533', 'th' =>  '8661', 'sg' => '11475', 'vn' => '10922'],
         'Dresses' => ['my' => '6590', 'ph' => '6753', 'th' => '8628', 'sg' => '6391', 'vn' => '8601'],
         'Midi Dresses' => ['my' => '6590', 'ph' => '6753', 'th' => '21419', 'sg' => '6389', 'vn' => '8601'],
         'Mini Dresses' => ['my' => '6590', 'ph' => '6753', 'th' => '8627', 'sg' => '11490', 'vn' => '8601'],
@@ -184,6 +184,7 @@ All products will be shipped from oversea, so please kindly understand the shipp
 
     ];
 
+    public $bags_category = [];
 
 
     public $profit = [
@@ -424,6 +425,53 @@ All products will be shipped from oversea, so please kindly understand the shipp
         return $output;
     }
 
+    private function execFormData($image){
+
+        $client = new Client();
+
+        try{
+            $response = $client->request('POST',$this->getRequestURL(),[
+                'headers' => ['Cookie'=>$this->COOKIE],
+                'multipart' => [
+
+                    [
+                        'name' => 'file',
+                        'contents' => fopen($image, 'r'),
+                    ],
+                ]
+            ]);
+
+        }
+        catch (\Exception $ex) {
+            var_dump($ex->getMessage());exit;
+        }
+
+        echo $response->getBody();
+
+//        try {
+//            $response = $client->request('POST', 'https://seller.id.shopee.cn/api/v3/general/upload_image/?SPC_CDS=a3b5e1a7-1f1c-4e84-a296-4c138aa95603&SPC_CDS_VER=2', [
+//
+//                'headers'=>['Cookie'=>'_ga=GA1.2.1593123027.1568830111; _ga=GA1.4.1593123027.1568830111; SPC_T_F=1; SPC_SC_SA_TK=; UYOMAPJWEMDGJ=; SPC_SC_SA_UD=; SPC_F=amnP3mudVyxuhqN7pF7PSeIMTcjuxCu0; SC_U=133537359; SPC_CDS=a3b5e1a7-1f1c-4e84-a296-4c138aa95603; SPC_T_IV="lWPiqJnAseY26lOhiM4QvQ=="; SPC_T_ID="311hIQoAHS6VPgEAhfqVDIj8M2KVu6NoAfLyECWGqSt9wtFN1hxsT0XMQ3iOXJYyJvnxMdqhT5D6txxDPMKPgX/wyLFYKmCbJSiQqp/xQK8="; csrftoken=MGwYhM0bGL6fJbACa8cABHZpgNranlX5; SPC_SC_TK=; UYOMAPJWEMDGJ=; SPC_SC_UD=; SPC_SC_SA_TK=; SPC_SC_SA_UD=; _gid=GA1.2.1869179657.1595209942; SC_DFP=plsG5sf4TgM0vcxeT93L6WJVV41vBg3p; SPC_SC_TK=e3e16897c9c2ffb6fa379f21fe5cfe94; SPC_WST="/Sb9Vfz4Q0LKo7kAAmvFy4YamRArPv3v6flbZCnN6pasyMFG+QiwfPjsHNSd2kfRYD9zYZ7f1VCQXcziDz28GN8VBy7Ols/wfZwbAPXQpKxB5D/feSJhA2tuAOF/o9MtdpPO2jzCF5PKiIqgei4bAzBT+Dx/UJGOMldt1edns20="; SPC_EC="/Sb9Vfz4Q0LKo7kAAmvFy4YamRArPv3v6flbZCnN6pasyMFG+QiwfPjsHNSd2kfRYD9zYZ7f1VCQXcziDz28GN8VBy7Ols/wfZwbAPXQpKxB5D/feSJhA2tuAOF/o9MtdpPO2jzCF5PKiIqgei4bAzBT+Dx/UJGOMldt1edns20="; SPC_SC_UD=133537359; SPC_U=13353735'],
+//
+//                'multipart' => [
+//
+//                    [
+//                        'name' => 'file',
+//                        'contents' => fopen($image, 'r'),
+//                    ],
+//                ]
+//            ]);
+//        } catch (\Exception $ex) {
+//            var_dump($ex->getMessage());exit;
+//        }
+//
+//        echo $response->getBody();
+
+
+
+
+    }
+
 
     /*
      * shopee login api
@@ -539,6 +587,29 @@ All products will be shipped from oversea, so please kindly understand the shipp
         $args['itemid'] = $itemid;
 
         $this->execHttp('DELETE',$args);
+    }
+
+
+    public function uploadImage($img){
+
+        //api/v3/general/upload_image/?SPC_CDS=a3b5e1a7-1f1c-4e84-a296-4c138aa95603&SPC_CDS_VER=2
+
+
+
+        $this->URI = '/api/v3/general/upload_image/';
+
+        $this->queryStr = http_build_query([
+            'SPC_CDS' => $this->SPC_CDS,
+            'SPC_CDS_VER' => $this->SPC_CDS_VER,
+        ]);
+
+        $response = $this->execFormData($img);
+
+        exit;
+
+
+        print_r($output);
+
     }
 
 
