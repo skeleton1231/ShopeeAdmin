@@ -366,7 +366,7 @@ All products will be shipped from oversea, so please kindly understand the shipp
 
         $images_columns = ['N','O','P','Q','R','S','T','U','V'];
 
-        $index = 6;
+        $index = 5;
 
         $var_name = 'Size';
 
@@ -389,31 +389,64 @@ All products will be shipped from oversea, so please kindly understand the shipp
             $formats = json_decode($good['formats'], true);
             $imgs = json_decode($good['imgsSrc'], true);
 
-            foreach ($formats as $f => $format){
+            $count = count($formats);
 
-                $index += $f;
+            if($count > 0){
 
-                $sheet->setCellValue('A' . $index, $category);
-                $sheet->setCellValue('B' . $index, $good['title_en']);
-                $sheet->setCellValue('C' . $index, 'abc');
-                $sheet->setCellValue('D' . $index, $good['shop_id'] . '/' . $good['goods_id']);
-                $sheet->setCellValue('E' . $index, uniqid());
-                $sheet->setCellValue('F' . $index, $var_name);
-                $sheet->setCellValue('G' . $index, $format);
-                $sheet->setCellValue('H' . $index, $imgs[0]);
-                $sheet->setCellValue('K' . $index, $price);
-                $sheet->setCellValue('L' . $index, 10);
-                $sheet->setCellValue('W' . $index, 1);
+                for ($i = 1; $i <= $count; $i++) {
 
-                foreach ($imgs as $m => $img){
+                    $index++;
 
-                    $sheet->setCellValue($images_columns[$m] . $index, $img);
+                    $sheet->setCellValue('A' . $index, $category);
+                    $sheet->setCellValue('B' . $index, $good['title_en']);
+                    $sheet->setCellValue('C' . $index, 'abc');
+                    $sheet->setCellValue('D' . $index, $good['shop_id'] . '/' . $good['goods_id']);
+                    $sheet->setCellValue('E' . $index, uniqid());
+                    $sheet->setCellValue('F' . $index, $var_name);
+                    $sheet->setCellValue('G' . $index, $formats[$i]);
+                    $sheet->setCellValue('H' . $index, $imgs[0]);
+                    $sheet->setCellValue('K' . $index, $price);
+                    $sheet->setCellValue('L' . $index, 10);
+                    $sheet->setCellValue('W' . $index, 1);
+
+                    foreach ($imgs as $m => $img){
+
+                        $sheet->setCellValue($images_columns[$m] . $index, $img);
+
+                    }
+
+                    $sheet->setCellValue('AA' . $index, 'On');
+
+                    usleep(100);
 
                 }
-
-                $sheet->setCellValue('AA' . $index, 'On');
-
             }
+
+//            foreach ($formats as $f => $format){
+//
+//                $index += $f;
+//
+//                $sheet->setCellValue('A' . $index, $category);
+//                $sheet->setCellValue('B' . $index, $good['title_en']);
+//                $sheet->setCellValue('C' . $index, 'abc');
+//                $sheet->setCellValue('D' . $index, $good['shop_id'] . '/' . $good['goods_id']);
+//                $sheet->setCellValue('E' . $index, uniqid());
+//                $sheet->setCellValue('F' . $index, $var_name);
+//                $sheet->setCellValue('G' . $index, $format);
+//                $sheet->setCellValue('H' . $index, $imgs[0]);
+//                $sheet->setCellValue('K' . $index, $price);
+//                $sheet->setCellValue('L' . $index, 10);
+//                $sheet->setCellValue('W' . $index, 1);
+//
+//                foreach ($imgs as $m => $img){
+//
+//                    $sheet->setCellValue($images_columns[$m] . $index, $img);
+//
+//                }
+//
+//                $sheet->setCellValue('AA' . $index, 'On');
+//
+//            }
         }
 
         $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
