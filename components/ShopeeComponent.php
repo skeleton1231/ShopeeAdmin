@@ -401,7 +401,7 @@ All products will be shipped from oversea, so please kindly understand the shipp
 
                     $sheet->setCellValue('A' . $index, $category);
                     $sheet->setCellValue('B' . $index, $good['title_en']);
-                    $sheet->setCellValue('C' . $index, 'abc');
+                    $sheet->setCellValue('C' . $index, $this->desc);
                     $sheet->setCellValue('D' . $index, $good['shop_id'] . '/' . $good['goods_id']);
                     $sheet->setCellValue('E' . $index, uniqid());
                     $sheet->setCellValue('F' . $index, $var_name);
@@ -422,6 +422,33 @@ All products will be shipped from oversea, so please kindly understand the shipp
                     usleep(100);
 
                 }
+            }
+            else{
+
+                $index++;
+
+                $sheet->setCellValue('A' . $index, $category);
+                $sheet->setCellValue('B' . $index, $good['title_en']);
+                $sheet->setCellValue('C' . $index, $this->desc);
+                $sheet->setCellValue('D' . $index, $good['shop_id'] . '/' . $good['goods_id']);
+                $sheet->setCellValue('E' . $index, uniqid());
+                $sheet->setCellValue('F' . $index, $var_name);
+                $sheet->setCellValue('G' . $index, '');
+                $sheet->setCellValue('H' . $index, $imgs[0]);
+                $sheet->setCellValue('K' . $index, $price);
+                $sheet->setCellValue('L' . $index, 10);
+                $sheet->setCellValue('W' . $index, 1);
+
+                foreach ($imgs as $m => $img){
+
+                    $sheet->setCellValue($images_columns[$m] . $index, $img);
+
+                }
+
+                $sheet->setCellValue('AA' . $index, 'On');
+
+                usleep(100);
+
             }
 
 //            foreach ($formats as $f => $format){
