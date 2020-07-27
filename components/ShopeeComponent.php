@@ -358,7 +358,9 @@ All products will be shipped from oversea, so please kindly understand the shipp
 
         file_put_contents($filename, $contents);
 
-        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        //$spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+
+        $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($filename);
 
         $sheet = $spreadsheet->getActiveSheet();
 
