@@ -387,6 +387,8 @@ All products will be shipped from oversea, so please kindly understand the shipp
             }
 
             $formats = json_decode($good['formats'], true);
+			
+	
             $imgs = json_decode($good['imgsSrc'], true);
 
             $count = count($formats);
@@ -403,7 +405,7 @@ All products will be shipped from oversea, so please kindly understand the shipp
                     $sheet->setCellValue('D' . $index, $good['shop_id'] . '/' . $good['goods_id']);
                     $sheet->setCellValue('E' . $index, uniqid());
                     $sheet->setCellValue('F' . $index, $var_name);
-                    $sheet->setCellValue('G' . $index, $formats[$i]);
+                    $sheet->setCellValue('G' . $index, $formats[$i-1]);
                     $sheet->setCellValue('H' . $index, $imgs[0]);
                     $sheet->setCellValue('K' . $index, $price);
                     $sheet->setCellValue('L' . $index, 10);
