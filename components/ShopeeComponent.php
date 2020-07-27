@@ -342,9 +342,90 @@ All products will be shipped from oversea, so please kindly understand the shipp
         $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
 
         @$writer->save($filename);
+    }
+
+    public function generateTemplateNew($goods, $name, $site = 'my', $page = 0){
+
+        $dir = Yii::$app->basePath . '/data/xlsx/' . $name . '/' . Date('Y-m-d H') . '/' . $site . '/';
+
+        if (!file_exists($dir)) {
+            mkdir($dir, 0777, true);
+        }
+
+        $filename = $dir . 'shopee_mass_upload' . $name . '_' . Date('YmdHis') . '_' . $site . '_' . '' . $page . '.xlsx';
+
+        $contents = file_get_contents(Yii::$app->basePath . '/data/template/' . $site . '/' . $site . '_shopee_mass_upload_basic_template.xlsx');
+
+        file_put_contents($filename, $contents);
+
+        $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+
+        $spreadsheet = $reader->load($filename);
+
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $profit = $this->profit[$site];
+
+        $images_columns = ['N','O','P','Q','R','S','T','U','V'];
+
+        $index = 6;
+
+        $var_name = 'Size';
+
+        foreach ($goods as $k => $good) {
+
+            $category = json_decode($good['category_id'],true)[$site];
+
+            $price = $good['price'] * $profit;
+
+            if ($site == 'vn' && $price > $this->vn_max_price) {
+
+                continue;
+
+            } elseif ($site != 'vn') {
+
+                $price = round(($price) / $this->discount);
+
+            }
+
+            $formats = json_decode($good['formats'], true);
+            $imgs = json_decode($good['imgsSrc'], true);
+
+            foreach ($formats as $f => $format){
+
+                $index += $f;
+
+                $sheet->setCellValue('A' . $index, $category);
+                $sheet->setCellValue('B' . $index, $good['title_en']);
+                $sheet->setCellValue('C' . $index, $this->desc);
+                $sheet->setCellValue('D' . $index, $good['shop_id'] . '/' . $good['goods_id']);
+                $sheet->setCellValue('E' . $index, uniqid());
+                $sheet->setCellValue('F' . $index, $var_name);
+                $sheet->setCellValue('G' . $index, $format);
+                $sheet->setCellValue('H' . $index, $imgs[0]);
+                $sheet->setCellValue('K' . $index, $price);
+                $sheet->setCellValue('L' . $index, 10);
+                $sheet->setCellValue('W' . $index, 1);
+
+                foreach ($imgs as $m => $img){
+
+                    $sheet->setCellValue($images_columns[$m] . $index, $img);
+
+                }
+
+                $sheet->setCellValue('AA' . $index, 'On');
+
+            }
+        }
+
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+
+        @$writer->save($filename);
+
 
 
     }
+
 
 
     public function setParams($seller)
