@@ -502,8 +502,6 @@ Class BrandComponent extends Component
         $good['title'] = preg_replace('/[A-Z][0-9]{5}/', '', $good['title']);
         $good['title'] = str_replace($good['price'], '', $good['title']);
 		$good['title'] = str_replace(',', ' ', $good['title']);
-
-
         $good['title'] = strtolower($good['title']);
 
         //$brand = $this->parseBrandV2($good['title']);
