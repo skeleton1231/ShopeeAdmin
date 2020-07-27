@@ -754,7 +754,6 @@ class WegoController extends \yii\web\Controller
                 //Yii::$app->shopee->generateTemplate($split, $name, $site, $category, $k);
 				Yii::$app->shopee->generateTemplateNew($split, $name, $site, $k);
 
-
             }
 
         }

@@ -358,9 +358,7 @@ All products will be shipped from oversea, so please kindly understand the shipp
 
         file_put_contents($filename, $contents);
 		
-        $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
-
-        $spreadsheet = $reader->load($filename);
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
 
         $sheet = $spreadsheet->getActiveSheet();
 		
@@ -397,7 +395,7 @@ All products will be shipped from oversea, so please kindly understand the shipp
 
                 $sheet->setCellValue('A' . $index, $category);
                 $sheet->setCellValue('B' . $index, $good['title_en']);
-                $sheet->setCellValue('C' . $index, $this->desc);
+                $sheet->setCellValue('C' . $index, 'abc');
                 $sheet->setCellValue('D' . $index, $good['shop_id'] . '/' . $good['goods_id']);
                 $sheet->setCellValue('E' . $index, uniqid());
                 $sheet->setCellValue('F' . $index, $var_name);
