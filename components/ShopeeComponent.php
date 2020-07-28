@@ -403,7 +403,7 @@ All products will be shipped from oversea, so please kindly understand the shipp
                     $sheet->setCellValue('B' . $index, $good['title_en']);
                     $sheet->setCellValue('C' . $index, $this->desc);
                     $sheet->setCellValue('D' . $index, $good['shop_id'] . '/' . $good['goods_id']);
-                    $sheet->setCellValue('E' . $index, uniqid());
+                    $sheet->setCellValue('E' . $index, $good['goods_id']);
                     $sheet->setCellValue('F' . $index, $var_name);
                     $sheet->setCellValue('G' . $index, $formats[$i-1]);
                     $sheet->setCellValue('H' . $index, $imgs[0]);
@@ -431,7 +431,7 @@ All products will be shipped from oversea, so please kindly understand the shipp
                 $sheet->setCellValue('B' . $index, $good['title_en']);
                 $sheet->setCellValue('C' . $index, $this->desc);
                 $sheet->setCellValue('D' . $index, $good['shop_id'] . '/' . $good['goods_id']);
-                $sheet->setCellValue('E' . $index, uniqid());
+                $sheet->setCellValue('E' . $index, $good['goods_id']);
                 $sheet->setCellValue('F' . $index, $var_name);
                 $sheet->setCellValue('G' . $index, '');
                 $sheet->setCellValue('H' . $index, $imgs[0]);
