@@ -374,7 +374,7 @@ All products will be shipped from oversea, so please kindly understand the shipp
 
         foreach ($goods as $k => $good) {
 
-            $category = json_decode($good['category_id'],true)[$site];
+            $category = (int) filter_var(json_decode($good['category_id'],true)[$site], FILTER_SANITIZE_NUMBER_INT);
 
             $price = $good['price'] * $profit;
 
