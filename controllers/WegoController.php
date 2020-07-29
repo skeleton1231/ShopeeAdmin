@@ -22,7 +22,8 @@ class WegoController extends \yii\web\Controller
         'A2017110512082711937' => 'woaiyundong',
         'A2017123001495401349' => 'hongda',
         'A2017110114531608903' => 'kelenvzhuang',
-        'A201805191935118730125778' => 'baobao'
+        'A201805191935118730125778' => 'baobao',
+		'A201910201109448761693' => 'nvxie'
     ];
 	
 	public function actionBag($goods_id)
