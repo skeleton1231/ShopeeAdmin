@@ -160,7 +160,7 @@ class WegoController extends \yii\web\Controller
 
             $good = Yii::$app->brand->parseShoe($good);
 
-            if ($good['is_translated'] != 1) {
+            if ($good['is_translated'] != 2) {
 
                 $goodM = WegoGoodsList::find()->where(['goods_id' => $good['goods_id']])->one();
 
@@ -188,7 +188,7 @@ class WegoController extends \yii\web\Controller
 
             $good = Yii::$app->brand->parseWomenShoe($good);
 
-            if ($good['is_translated'] != 1) {
+            if ($good['is_translated'] != 2) {
 
                 $goodM = WegoGoodsList::find()->where(['goods_id' => $good['goods_id']])->one();
 
@@ -574,6 +574,46 @@ class WegoController extends \yii\web\Controller
 
             $items[] = $good;
 
+
+        }
+
+        print_r($items);
+    }
+
+
+    public function actionBelt($goods_id)
+    {
+
+        $good = ArrayHelper::toArray(WegoGoodsList::find()->where(['goods_id' => $goods_id])->one());
+
+
+        $good = Yii::$app->brand->parseBelt($good);
+
+        print_r($good);
+    }
+
+    public function actionBelts($shop_id){
+
+        $command = Yii::$app->db->createCommand("SELECT * FROM `wego_goods_list` WHERE `shop_id` = '{$shop_id}' AND `is_translated`=0 AND `price`!=0");
+        $goods = $command->queryAll();
+
+        $items = [];
+
+        foreach ($goods as $good) {
+
+            $good = Yii::$app->brand->parseBelt($good);
+
+            if ($good['is_translated'] != 2) {
+
+                $goodM = WegoGoodsList::find()->where(['goods_id' => $good['goods_id']])->one();
+
+                $goodM->formats = $good['formats'];
+                $goodM->title_en = $good['title_en'];
+                $goodM->cate = $good['cate'];
+                $goodM->update();
+                $goodM->is_translated = 1;
+                $items[] = $good;
+            }
 
         }
 
