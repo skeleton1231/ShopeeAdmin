@@ -757,6 +757,47 @@ Class BrandComponent extends Component
         return $good;
     }
 
+
+    public function parseWomenShoe($good){
+
+        $sex = "Women's";
+
+        if (preg_match('/\d{2}-\d{2}/', $good['title'], $sizeArr)) {
+
+            $size = $sizeArr[0];
+        } else {
+            $size = '35-40';
+        }
+
+
+        $size_arr = explode('-', $size);
+        $start = (int)$size_arr[0];
+        $end = (int)$size_arr[1];
+
+        $formats = [];
+
+        for ($i = $start; $i <= $end; $i++) {
+
+            if ($i < 46) {
+                $formats[] = $i;
+            }
+        }
+
+        $this->setBrands();
+        $this->setCategories();
+
+        $brand = $this->parseBrandV2($good['title']);
+
+        $code = substr($good['shop_id'] . '/' . $good['goods_id'], -6);
+
+        $good['title_en'] = 'Original ' . Date('Y') . ' ' . $brand . ' ' . $sex . ' Leather Shoes' .  ' Size: ' . $size . ' ' . $code . '';
+
+        $good['formats'] = json_encode($formats);
+
+        return $good;
+
+    }
+
     public function parseSport($good)
     {
 
