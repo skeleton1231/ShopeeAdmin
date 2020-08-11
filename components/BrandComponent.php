@@ -996,7 +996,7 @@ Class BrandComponent extends Component
 
         $code = substr($good['shop_id'] . '/' . $good['goods_id'], -6);
 
-        $good['title_en'] .=  ' ' . $sex . ' ' . $category . ' ' . $code;
+        $good['title_en'] =  $good['title'] . ' ' . $sex . ' ' . $category . ' ' . $code;
 
         $good['title_en'] = ucwords($good['title_en']);
 
