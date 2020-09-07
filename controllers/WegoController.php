@@ -25,6 +25,34 @@ class WegoController extends \yii\web\Controller
         'A201805191935118730125778' => 'baobao',
 		'A201910201109448761693' => 'nvxie'
     ];
+
+    public function actionWatches($shop_id){
+
+        $command = Yii::$app->db->createCommand("SELECT * FROM `wego_goods_list` WHERE `shop_id` = '{$shop_id}' AND `is_translated`=0");
+        $goods = $command->queryAll();
+
+        $items = [];
+
+        foreach ($goods as $good) {
+
+            $good = Yii::$app->brand->parseWatch($good);
+
+            if ($good['is_translated'] != 2) {
+
+                $goodM = WegoGoodsList::find()->where(['goods_id' => $good['goods_id']])->one();
+
+                $goodM->formats = $good['formats'];
+                $goodM->title_en = $good['title_en'];
+                $goodM->cate = $good['cate'];
+                $goodM->update();
+                $goodM->is_translated = 1;
+                $items[] = $good;
+            }
+
+        }
+
+        print_r($items);
+    }
 	
 	public function actionBag($goods_id)
     {
@@ -279,6 +307,8 @@ class WegoController extends \yii\web\Controller
         Yii::$app->brand->setBrands();
         Yii::$app->brand->setCategories();
         Yii::$app->brand->setMaterial();
+
+
 
         $items = [];
 
