@@ -1029,10 +1029,15 @@ Class BrandComponent extends Component
 
        // $good['title'] = preg_replace('#[\x{4e00}-\x{9fa5}]#u', ' ', $good['title']);
        // $good['title'] = preg_replace('/([\x80-\xff]*)/i', ' ', $good['title']);
-	    preg_match_all('/\w+/', $good['title'], $matches);
+		
+		 $title = '';
+		
+        if(preg_match_all('/\w+/', $good['title'], $matches)){
+			
+			if(is_array($matches)){$title = implode(' ', $matches[0]);}
+			//print_r($matches);
+        }
 
-        $title = implode(' ', $matches);
-        
         $code = substr($good['shop_id'] . '/' . $good['goods_id'], -6);
 
         $good['title_en'] =   'Round1 Luxury ' . $title . ' ' . $sex . ' ' . $category . ' ' . $code;
