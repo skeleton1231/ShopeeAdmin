@@ -1027,9 +1027,11 @@ Class BrandComponent extends Component
 
         $sex = $this->parseSex($good['title']);
 
-        $good['title'] = preg_replace('#[\x{4e00}-\x{9fa5}]#u', ' ', $good['title']);
-        $good['title'] = preg_replace('/([\x80-\xff]*)/i', ' ', $good['title']);
-
+       // $good['title'] = preg_replace('#[\x{4e00}-\x{9fa5}]#u', ' ', $good['title']);
+       // $good['title'] = preg_replace('/([\x80-\xff]*)/i', ' ', $good['title']);
+        if(preg_match_all('^[A-Za-z0-9]+$', $good['title'], $matches)) {
+            print_r($matches);
+        }
 
         $code = substr($good['shop_id'] . '/' . $good['goods_id'], -6);
 
