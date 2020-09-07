@@ -1027,18 +1027,13 @@ Class BrandComponent extends Component
 
         $sex = $this->parseSex($good['title']);
 
-        //$good['title'] = preg_replace('#[\x{4e00}-\x{9fa5}]#u', '', $good['title']);
-        //$good['title'] = preg_replace('/([\x80-\xff]*)/i', '', $good['title']);
-
-        preg_match_all('/^[A-Za-z]+$/',$good['title'],$matches);
-
-        print_r($matches);
-        exit;
+        $good['title'] = preg_replace('#[\x{4e00}-\x{9fa5}]#u', '', $good['title']);
+        $good['title'] = preg_replace('/([\x80-\xff]*)/i', '', $good['title']);
 
 
         $code = substr($good['shop_id'] . '/' . $good['goods_id'], -6);
 
-        $good['title_en'] =   'Round1 Luxury ' . $sex . ' ' . $category . ' ' . $code;
+        $good['title_en'] =   'Round1 Luxury ' . $good['title'] . ' ' . $sex . ' ' . $category . ' ' . $code;
 
         $good['title_en'] = ucwords($good['title_en']);
 
