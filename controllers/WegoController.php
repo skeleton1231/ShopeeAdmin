@@ -44,14 +44,14 @@ class WegoController extends \yii\web\Controller
                 $goodM->formats = $good['formats'];
                 $goodM->title_en = $good['title_en'];
                 $goodM->cate = $good['cate'];
-              //  $goodM->update();
+                $goodM->update();
                 $goodM->is_translated = 1;
                 $items[] = $good;
             }
 
         }
 
-       // print_r($items);
+        print_r($items);
     }
 	
 	public function actionBag($goods_id)
@@ -301,7 +301,7 @@ class WegoController extends \yii\web\Controller
 
     public function actionTitle($shop_id)
     {
-        $command = Yii::$app->db->createCommand("SELECT * FROM `wego_goods_list` WHERE `shop_id` = '{$shop_id}' AND `is_translated`=0");
+        $command = Yii::$app->db->createCommand("SELECT * FROM `wego_goods_list` WHERE `shop_id` = '{$shop_id}' AND `is_translated` = 0");
         $goods = $command->queryAll();
 
         Yii::$app->brand->setBrands();
@@ -324,6 +324,8 @@ class WegoController extends \yii\web\Controller
 
             $goodM->is_translated = 1;
             $goodM->update();
+			
+			usleep(100);
 
             $items[] = $item;
 
