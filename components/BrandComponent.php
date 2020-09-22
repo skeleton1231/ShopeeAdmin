@@ -1031,8 +1031,8 @@ Class BrandComponent extends Component
        // $good['title'] = preg_replace('/([\x80-\xff]*)/i', ' ', $good['title']);
         if(preg_match_all('/\w+/', $good['title'], $matches)){
 
-            $title = implode(' ', $matches);
-
+            //$title = implode(' ', $matches);
+            print_r($matches);
         }
         else{
 
